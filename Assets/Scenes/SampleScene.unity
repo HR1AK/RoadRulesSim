@@ -359,10 +359,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roadPrefabs:
   - {fileID: 8039834894580801447, guid: c0032f4c101ff2443a2ebf10b0218cc1, type: 3}
-  - {fileID: 5347443373354640695, guid: df0c4172255ed3347a202b8dd5f36141, type: 3}
   - {fileID: 2261009524785206182, guid: f82b78b497010d146ad9097fc8fcd933, type: 3}
+  - {fileID: 5347443373354640695, guid: df0c4172255ed3347a202b8dd5f36141, type: 3}
   - {fileID: 5444177906832142897, guid: d2840373a1510ef488d0f40899e6f01a, type: 3}
-  maxSegment: 25
+  maxSegment: 18
   cellSize: 43
 --- !u!1001 &1074802329
 PrefabInstance:
