@@ -20,6 +20,8 @@ public class RoadSocket : MonoBehaviour
 
     // Удобное свойство — направление сокета
     public Vector3 Forward => transform.forward;
+    public Vector3 LocalForward => transform.localRotation * Vector3.forward;
+
     public RoadLaneType LaneType => laneType;
     public bool IsOccupied => isOccupied;
 

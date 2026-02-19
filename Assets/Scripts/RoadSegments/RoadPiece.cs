@@ -43,4 +43,9 @@ public class RoadPiece : MonoBehaviour
     {
         return sockets.Any(s => !s.IsOccupied);
     }
+
+    public List<RoadSocket> GetSockets()
+    {
+        return sockets;
+    }
 }
