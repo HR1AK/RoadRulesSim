@@ -7,6 +7,9 @@ public class RoadPiece : MonoBehaviour
     [Header("Sockets")]
     [SerializeField] private List<RoadSocket> sockets = new List<RoadSocket>();
 
+    [SerializeField] private int weight = 1;
+    public int Weight => weight;
+
     private void Awake()
     {
         // Автоматически собираем все соккеты внутри префаба

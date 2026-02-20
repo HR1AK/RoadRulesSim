@@ -5,10 +5,9 @@ using UnityEngine;
 public enum RoadLaneType
 {
     NoneLine = 0,
-    OneLine = 1,
-    TwoLine = 2,
-    TwoWideLine = 4,
-    FourLine = 8
+    Line2 = 1,
+    Line4 = 2,
+    Line8 = 4
 }
 
 public class RoadSocket : MonoBehaviour

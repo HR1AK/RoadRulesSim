@@ -31,52 +31,60 @@ public class RoadGridGenerator : MonoBehaviour
         }
     }
 
-    private RoadPiece TryPlacePiece(Vector2Int cell, Vector3 position)
+private RoadPiece TryPlacePiece(Vector2Int cell, Vector3 position)
+{
+    RoadPiece leftNeighbour = grid.GetNeighbour(cell, Vector2Int.left);
+    RoadPiece downNeighbour = grid.GetNeighbour(cell, Vector2Int.down);
+
+    Dictionary<RoadPiece, List<Quaternion>> validByPrefab =
+        new Dictionary<RoadPiece, List<Quaternion>>();
+
+    foreach (var prefab in roadPrefabs)
     {
-        RoadPiece leftNeighbour = grid.GetNeighbour(cell, Vector2Int.left);
-        RoadPiece downNeighbour = grid.GetNeighbour(cell, Vector2Int.down);
-
-        List<RoadPiece> validPieces = new List<RoadPiece>();
-
-        foreach (var prefab in roadPrefabs)
+        for (int i = 0; i < 4; i++)
         {
-            for (int i = 0; i < 4; i++)
+            Quaternion rotation = Quaternion.Euler(0, i * 90, 0);
+            RoadPiece test = Instantiate(prefab, position, rotation, transform);
+
+            if (IsValid(test, leftNeighbour, downNeighbour))
             {
-                Quaternion rotation = Quaternion.Euler(0, i * 90, 0);
+                if (!validByPrefab.ContainsKey(prefab))
+                    validByPrefab[prefab] = new List<Quaternion>();
 
-                RoadPiece test = Instantiate(prefab, position, rotation, transform);
-
-                if (IsValid(test, leftNeighbour, downNeighbour))
-                {
-                    validPieces.Add(test); // сохраняем подходящий
-                }
-                else
-                {
-                    Destroy(test.gameObject);
-                }
-            }
-        }
-
-        Debug.Log("Valid count: " + validPieces.Count);
-        if (validPieces.Count > 0)
-        {
-            Random.InitState(System.DateTime.Now.Millisecond);
-            int randomIndex = Random.Range(0, validPieces.Count);
-            RoadPiece chosen = validPieces[randomIndex];
-
-            // удаляем остальные
-            for (int i = 0; i < validPieces.Count; i++)
-            {
-                if (i != randomIndex)
-                    Destroy(validPieces[i].gameObject);
+                validByPrefab[prefab].Add(rotation);
             }
 
-            return chosen;
+            Destroy(test.gameObject);
         }
-
-        // fallback
-        return Instantiate(roadPrefabs[0], position, Quaternion.identity, transform);
     }
+
+    if (validByPrefab.Count == 0)
+        return null;
+
+    // --- WEIGHTED RANDOM ---
+    int totalWeight = 0;
+    foreach (var pair in validByPrefab)
+        totalWeight += pair.Key.Weight;
+
+    int randomValue = Random.Range(0, totalWeight);
+    RoadPiece chosenPrefab = null;
+
+    foreach (var pair in validByPrefab)
+    {
+        randomValue -= pair.Key.Weight;
+        if (randomValue < 0)
+        {
+            chosenPrefab = pair.Key;
+            break;
+        }
+    }
+
+    // случайный поворот выбранного prefab
+    List<Quaternion> rotations = validByPrefab[chosenPrefab];
+    Quaternion chosenRotation = rotations[Random.Range(0, rotations.Count)];
+
+    return Instantiate(chosenPrefab, position, chosenRotation, transform);
+}
 
 
     private bool IsValid(RoadPiece piece,
