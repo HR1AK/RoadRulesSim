@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -58,7 +58,6 @@ namespace HealthbarGames
 
         void Start()
         {
-            // after scene start load initial program
             ChangeProgram(InitialProgram);
         }
 
@@ -160,6 +159,42 @@ namespace HealthbarGames
                 yield return new WaitForSeconds(blinkDelay);
             }
         }
-    }
 
+        public void AutoSetupPhases(List<RealTrafficLight> allLights)
+        {
+            StopAllCoroutines();
+            PhaseList.Clear();
+
+            Debug.Log("Real traffic lights received: " + allLights.Count);
+
+            List<TrafficLightBase> vertical = new List<TrafficLightBase>();
+            List<TrafficLightBase> horizontal = new List<TrafficLightBase>();
+
+            foreach (var light in allLights)
+            {
+                Vector3 forward = light.transform.forward;
+
+                if (Mathf.Abs(forward.z) > Mathf.Abs(forward.x))
+                    vertical.Add(light);
+                else
+                    horizontal.Add(light);
+            }
+
+            TrafficLightPhase phaseVertical = new TrafficLightPhase();
+            phaseVertical.Initialize("Vertical", 2f, 10f, 2f);
+            phaseVertical.TrafficLights = vertical.ToArray();
+
+            TrafficLightPhase phaseHorizontal = new TrafficLightPhase();
+            phaseHorizontal.Initialize("Horizontal", 2f, 10f, 2f);
+            phaseHorizontal.TrafficLights = horizontal.ToArray();
+
+            PhaseList.Add(phaseVertical);
+            PhaseList.Add(phaseHorizontal);
+
+           
+            ChangeProgram(Program.Main);
+            // after scene start load initial program
+
+        }
+    }
 }

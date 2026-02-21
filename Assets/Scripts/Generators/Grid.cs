@@ -1,61 +1,36 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Grid
 {
-    private int width;
-    private int height;
+    private PlacedPiece[,] cells;
 
-    private Dictionary<Vector2Int, RoadPiece> cells = new();
+    public int Width { get; }
+    public int Height { get; }
 
-    public int Width => width;
-    public int Height => height;
-
-    public Grid(int segmentsCount)
+    public Grid(int width, int height)
     {
-        Vector2Int size = CalculateGridSize(segmentsCount);
-        width = size.x;
-        height = size.y;
+        Width = width;
+        Height = height;
+
+        cells = new PlacedPiece[width, height];
     }
 
-    public void Set(Vector2Int cell, RoadPiece piece)
+    public void Set(Vector2Int pos, PlacedPiece piece)
     {
-        cells[cell] = piece;
+        cells[pos.x, pos.y] = piece;
     }
 
-    public bool TryGet(Vector2Int cell, out RoadPiece piece)
+    public PlacedPiece Get(Vector2Int pos)
     {
-        return cells.TryGetValue(cell, out piece);
+        if (pos.x < 0 || pos.x >= Width ||
+            pos.y < 0 || pos.y >= Height)
+            return null;
+
+        return cells[pos.x, pos.y];
     }
 
-    public RoadPiece GetNeighbour(Vector2Int cell, Vector2Int direction)
+    public PlacedPiece GetNeighbour(Vector2Int pos, Vector2Int dir)
     {
-        cells.TryGetValue(cell + direction, out RoadPiece neighbour);
-        return neighbour;
-    }
-
-    private Vector2Int CalculateGridSize(int segmentsCount)
-    {
-        int bestWidth = 1;
-        int bestHeight = segmentsCount;
-        int bestDiff = segmentsCount;
-
-        for (int w = 1; w * w <= segmentsCount; w++)
-        {
-            if (segmentsCount % w != 0)
-                continue;
-
-            int h = segmentsCount / w;
-            int diff = Mathf.Abs(w - h);
-
-            if (diff < bestDiff)
-            {
-                bestDiff = diff;
-                bestWidth = w;
-                bestHeight = h;
-            }
-        }
-
-        return new Vector2Int(bestWidth, bestHeight);
+        return Get(pos + dir);
     }
 }

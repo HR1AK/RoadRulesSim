@@ -1,136 +1,164 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using HealthbarGames;
+
 public class RoadGridGenerator : MonoBehaviour
 {
     [SerializeField] private List<RoadPiece> roadPrefabs;
-    [SerializeField] private int maxSegment;
-    [SerializeField] private float cellSize;
+    [SerializeField] private int maxSegment = 10;
+    [SerializeField] private float cellSize = 10f;
+    List<RealTrafficLight> spawnedLights = new List<RealTrafficLight>();
+    [SerializeField] private TrafficLightManager trafficLightManager;
 
     private Grid grid;
 
     void Start()
     {
         GenerateGrid();
+        trafficLightManager.AutoSetupPhases(spawnedLights);
     }
 
     private void GenerateGrid()
     {
-        grid = new Grid(maxSegment);
+        Vector2Int size = CalculateGridSize(maxSegment);
 
-        for (int x = 0; x < grid.Width; x++)
+        int width = size.x;
+        int height = size.y;
+
+        grid = new Grid(width, height);
+
+        for (int x = 0; x < width; x++)
         {
-            for (int z = 0; z < grid.Height; z++)
+            for (int y = 0; y < height; y++)
             {
-                Vector2Int cell = new Vector2Int(x, z);
-                Vector3 pos = new Vector3(x * cellSize, 0, z * cellSize);
+                Vector2Int cell = new Vector2Int(x, y);
+                Vector3 worldPos = new Vector3(x * cellSize, 0, y * cellSize);
 
-                RoadPiece placed = TryPlacePiece(cell, pos);
+                PlacedPiece placed = TryPlacePiece(cell);
                 grid.Set(cell, placed);
+
+                if (placed != null)
+                {
+                    Quaternion rot = Quaternion.Euler(0, placed.RotationSteps * 90f, 0);
+                    RoadPiece instance = Instantiate(placed.Prefab, worldPos, rot, transform);
+
+                    RealTrafficLight[] lights = instance.GetComponentsInChildren<RealTrafficLight>();
+                    spawnedLights.AddRange(lights);
+                }
             }
         }
     }
 
-private RoadPiece TryPlacePiece(Vector2Int cell, Vector3 position)
-{
-    RoadPiece leftNeighbour = grid.GetNeighbour(cell, Vector2Int.left);
-    RoadPiece downNeighbour = grid.GetNeighbour(cell, Vector2Int.down);
-
-    Dictionary<RoadPiece, List<Quaternion>> validByPrefab =
-        new Dictionary<RoadPiece, List<Quaternion>>();
-
-    foreach (var prefab in roadPrefabs)
+    private PlacedPiece TryPlacePiece(Vector2Int cell)
     {
-        for (int i = 0; i < 4; i++)
-        {
-            Quaternion rotation = Quaternion.Euler(0, i * 90, 0);
-            RoadPiece test = Instantiate(prefab, position, rotation, transform);
+        PlacedPiece left = grid.GetNeighbour(cell, Vector2Int.left);
+        PlacedPiece down = grid.GetNeighbour(cell, Vector2Int.down);
 
-            if (IsValid(test, leftNeighbour, downNeighbour))
+        List<PlacedPiece> valid = new List<PlacedPiece>();
+
+        foreach (var prefab in roadPrefabs)
+        {
+            for (int rot = 0; rot < 4; rot++)
             {
-                if (!validByPrefab.ContainsKey(prefab))
-                    validByPrefab[prefab] = new List<Quaternion>();
-
-                validByPrefab[prefab].Add(rotation);
+                if (IsValid(prefab, rot, left, down))
+                {
+                    valid.Add(new PlacedPiece(prefab, rot));
+                }
             }
-
-            Destroy(test.gameObject);
         }
-    }
 
-    if (validByPrefab.Count == 0)
-        return null;
+        // Дебаг: сколько вариантов подходит для каждой клетки
+        // Debug.Log($"Cell {cell} has {valid.Count} valid pieces");
 
-    // --- WEIGHTED RANDOM ---
-    int totalWeight = 0;
-    foreach (var pair in validByPrefab)
-        totalWeight += pair.Key.Weight;
+        if (valid.Count == 0)
+            return null;
 
-    int randomValue = Random.Range(0, totalWeight);
-    RoadPiece chosenPrefab = null;
+        // weighted random
+        int totalWeight = 0;
+        foreach (var v in valid)
+            totalWeight += v.Prefab.Weight;
 
-    foreach (var pair in validByPrefab)
-    {
-        randomValue -= pair.Key.Weight;
-        if (randomValue < 0)
+        int rand = Random.Range(0, totalWeight);
+
+        foreach (var v in valid)
         {
-            chosenPrefab = pair.Key;
-            break;
+            rand -= v.Prefab.Weight;
+            if (rand < 0)
+                return v;
         }
+
+        return valid[0];
     }
-
-    // случайный поворот выбранного prefab
-    List<Quaternion> rotations = validByPrefab[chosenPrefab];
-    Quaternion chosenRotation = rotations[Random.Range(0, rotations.Count)];
-
-    return Instantiate(chosenPrefab, position, chosenRotation, transform);
-}
-
 
     private bool IsValid(RoadPiece piece,
-                         RoadPiece leftNeighbour,
-                         RoadPiece downNeighbour)
+                         int rotationSteps,
+                         PlacedPiece left,
+                         PlacedPiece down)
     {
-        if (leftNeighbour != null)
+        if (left != null)
         {
-            if (!Match(piece, Vector3.left,
-                       leftNeighbour, Vector3.right))
+            if (GetSide(piece, rotationSteps, Vector2Int.left) !=
+                GetSide(left.Prefab, left.RotationSteps, Vector2Int.right))
                 return false;
         }
 
-        if (downNeighbour != null)
+        if (down != null)
         {
-            if (!Match(piece, Vector3.back,
-                       downNeighbour, Vector3.forward))
+            if (GetSide(piece, rotationSteps, Vector2Int.down) !=
+                GetSide(down.Prefab, down.RotationSteps, Vector2Int.up))
                 return false;
         }
 
         return true;
     }
 
-    private bool Match(RoadPiece piece, Vector3 myDirection,
-                       RoadPiece neighbour, Vector3 neighbourDirection)
+    private RoadLaneType GetSide(RoadPiece piece, int rot, Vector2Int dir)
     {
-        RoadSocket mySocket = GetSocketFacing(piece, myDirection);
-        RoadSocket neighbourSocket = GetSocketFacing(neighbour, neighbourDirection);
+        RoadLaneType n = piece.North;
+        RoadLaneType e = piece.East;
+        RoadLaneType s = piece.South;
+        RoadLaneType w = piece.West;
 
-        if (mySocket == null || neighbourSocket == null)
-            return false;
+        for (int i = 0; i < rot; i++)
+        {
+            RoadLaneType temp = n;
+            n = w;
+            w = s;
+            s = e;
+            e = temp;
+        }
 
-        return mySocket.LaneType == neighbourSocket.LaneType;
+        if (dir == Vector2Int.up) return n;
+        if (dir == Vector2Int.right) return e;
+        if (dir == Vector2Int.down) return s;
+        if (dir == Vector2Int.left) return w;
+
+        return RoadLaneType.NoneLine;
     }
 
-    private RoadSocket GetSocketFacing(RoadPiece piece, Vector3 direction)
+    private Vector2Int CalculateGridSize(int segmentsCount)
     {
-        foreach (var socket in piece.GetSockets())
+        int bestWidth = 1;
+        int bestHeight = segmentsCount;
+        int bestDiff = segmentsCount;
+
+        for (int w = 1; w * w <= segmentsCount; w++)
         {
-            if (Vector3.Dot(socket.transform.forward.normalized,
-                            direction.normalized) > 0.95f)
+            if (segmentsCount % w != 0)
+                continue;
+
+            int h = segmentsCount / w;
+            int diff = Mathf.Abs(w - h);
+
+            if (diff < bestDiff)
             {
-                return socket;
+                bestDiff = diff;
+                bestWidth = w;
+                bestHeight = h;
             }
         }
 
-        return null;
+        return new Vector2Int(bestWidth, bestHeight);
     }
 }
