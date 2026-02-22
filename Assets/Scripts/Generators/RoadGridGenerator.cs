@@ -11,6 +11,9 @@ public class RoadGridGenerator : MonoBehaviour
     List<RealTrafficLight> spawnedLights = new List<RealTrafficLight>();
     [SerializeField] private TrafficLightManager trafficLightManager;
 
+    private int width;
+    private int height;
+
     private Grid grid;
 
     void Start()
@@ -23,8 +26,8 @@ public class RoadGridGenerator : MonoBehaviour
     {
         Vector2Int size = CalculateGridSize(maxSegment);
 
-        int width = size.x;
-        int height = size.y;
+        width = size.x;
+        height = size.y;
 
         grid = new Grid(width, height);
 
@@ -61,7 +64,7 @@ public class RoadGridGenerator : MonoBehaviour
         {
             for (int rot = 0; rot < 4; rot++)
             {
-                if (IsValid(prefab, rot, left, down))
+                if (IsValid(cell, prefab, rot, left, down))
                 {
                     valid.Add(new PlacedPiece(prefab, rot));
                 }
@@ -91,11 +94,34 @@ public class RoadGridGenerator : MonoBehaviour
         return valid[0];
     }
 
-    private bool IsValid(RoadPiece piece,
-                         int rotationSteps,
-                         PlacedPiece left,
-                         PlacedPiece down)
+    // Учитываем, что на границе может быть любой кусок. 
+    // private bool IsValid(RoadPiece piece, int rotationSteps, PlacedPiece left, PlacedPiece down)
+    // {
+    //     if (left != null)
+    //     {
+    //         if (GetSide(piece, rotationSteps, Vector2Int.left) !=
+    //             GetSide(left.Prefab, left.RotationSteps, Vector2Int.right))
+    //             return false;
+    //     }
+
+    //     if (down != null)
+    //     {
+    //         if (GetSide(piece, rotationSteps, Vector2Int.down) !=
+    //             GetSide(down.Prefab, down.RotationSteps, Vector2Int.up))
+    //             return false;
+    //     }
+
+    //     return true;
+    // }
+
+    // Учитываем, что на границе должен быть "нет дороги"
+    private bool IsValid(Vector2Int cell,
+                     RoadPiece piece,
+                     int rotationSteps,
+                     PlacedPiece left,
+                     PlacedPiece down)
     {
+        // Стыковка с уже поставленными (как было)
         if (left != null)
         {
             if (GetSide(piece, rotationSteps, Vector2Int.left) !=
@@ -110,9 +136,25 @@ public class RoadGridGenerator : MonoBehaviour
                 return false;
         }
 
+        // Границы: наружу должна быть "нет дороги"
+        if (cell.x == 0 &&
+            GetSide(piece, rotationSteps, Vector2Int.left) != RoadLaneType.NoneLine)
+            return false;
+
+        if (cell.x == width - 1 &&
+            GetSide(piece, rotationSteps, Vector2Int.right) != RoadLaneType.NoneLine)
+            return false;
+
+        if (cell.y == 0 &&
+            GetSide(piece, rotationSteps, Vector2Int.down) != RoadLaneType.NoneLine)
+            return false;
+
+        if (cell.y == height - 1 &&
+            GetSide(piece, rotationSteps, Vector2Int.up) != RoadLaneType.NoneLine)
+            return false;
+
         return true;
     }
-
     private RoadLaneType GetSide(RoadPiece piece, int rot, Vector2Int dir)
     {
         RoadLaneType n = piece.North;

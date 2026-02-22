@@ -58,6 +58,12 @@ namespace HealthbarGames
 
         void Start()
         {
+            if (PhaseList == null || PhaseList.Count == 0)
+            {
+                ChangeProgram(Program.Malfunction);
+                return;
+            }
+
             ChangeProgram(InitialProgram);
         }
 
@@ -91,6 +97,9 @@ namespace HealthbarGames
         // coroutine for main program
         private IEnumerator MainProgramCo()
         {
+             if (PhaseList == null || PhaseList.Count == 0)
+                yield break;
+            Debug.Log($"[TLM MainCo] obj={name} id={GetInstanceID()} phases={(PhaseList==null ? -1 : PhaseList.Count)}");
             // select first phase from list
             mCurrentPhaseIndex = 0;
             mCurrentPhase = PhaseList[0];

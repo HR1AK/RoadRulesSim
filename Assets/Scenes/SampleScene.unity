@@ -380,7 +380,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1063646070
 Transform:
   m_ObjectHideFlags: 0
@@ -422,7 +422,11 @@ MonoBehaviour:
   - {fileID: 5444177906832142897, guid: efce5037d33b34549a7e64e0bef5e6e7, type: 3}
   - {fileID: 5444177906832142897, guid: 6bd61b2e46ca7294eb67a54b217ec179, type: 3}
   - {fileID: 5444177906832142897, guid: 7a4f6dcf2f663c2418b3b2c775523f07, type: 3}
-  maxSegment: 20
+  - {fileID: 5444177906832142897, guid: f391fc6f6e210e546b80a43c51e3c461, type: 3}
+  - {fileID: 5444177906832142897, guid: ecd73fa5222330c4d940bd6199c63d5a, type: 3}
+  - {fileID: 5444177906832142897, guid: 395097d0cc966864091a633a759b186d, type: 3}
+  - {fileID: 8039834894580801447, guid: 2baba89e964dfac4eaa6cd4bdd46d9ac, type: 3}
+  maxSegment: 100
   cellSize: 40
   trafficLightManager: {fileID: 84309203}
 --- !u!1001 &1074802329
@@ -576,6 +580,75 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 74e3ad87fd269a0408b4a22366d0a47d, type: 3}
+--- !u!1 &1903202385
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1903202387}
+  - component: {fileID: 1903202386}
+  m_Layer: 0
+  m_Name: WFCGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1903202386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1903202385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d809c8f1a557724e900edbbd7879a08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roadPrefabs:
+  - {fileID: 5444177906832142897, guid: 5a258723659a0e74eb3b0bfe278e9b54, type: 3}
+  - {fileID: 2261009524785206182, guid: f82b78b497010d146ad9097fc8fcd933, type: 3}
+  - {fileID: 5444177906832142897, guid: 48d79256c24bd8242b803d8c419649a6, type: 3}
+  - {fileID: 5444177906832142897, guid: da9794f66bb902a4f933bc42c7eea892, type: 3}
+  - {fileID: 8039834894580801447, guid: c0032f4c101ff2443a2ebf10b0218cc1, type: 3}
+  - {fileID: 5444177906832142897, guid: 28f9b3709b93e334dad3a08eeaa97906, type: 3}
+  - {fileID: 5444177906832142897, guid: c166034454fa0a044b6e9ab16a90f3e6, type: 3}
+  - {fileID: 5444177906832142897, guid: 06ad7ed60b91ef44f8a74e2c544e81d4, type: 3}
+  - {fileID: 5444177906832142897, guid: 0fbb165c8ae6dbb40a5ad88ef759930b, type: 3}
+  - {fileID: 5444177906832142897, guid: efce5037d33b34549a7e64e0bef5e6e7, type: 3}
+  - {fileID: 5444177906832142897, guid: 6bd61b2e46ca7294eb67a54b217ec179, type: 3}
+  - {fileID: 5444177906832142897, guid: 7a4f6dcf2f663c2418b3b2c775523f07, type: 3}
+  - {fileID: 5444177906832142897, guid: f391fc6f6e210e546b80a43c51e3c461, type: 3}
+  - {fileID: 5444177906832142897, guid: ecd73fa5222330c4d940bd6199c63d5a, type: 3}
+  - {fileID: 5444177906832142897, guid: 395097d0cc966864091a633a759b186d, type: 3}
+  - {fileID: 8039834894580801447, guid: 2baba89e964dfac4eaa6cd4bdd46d9ac, type: 3}
+  - {fileID: 5444177906832142897, guid: d2840373a1510ef488d0f40899e6f01a, type: 3}
+  maxSegments: 1024
+  cellSize: 40
+  constrainBordersToNone: 1
+  maxRestarts: 20
+  seed: 0
+  logRestarts: 1
+  trafficLightManager: {fileID: 84309203}
+--- !u!4 &1903202387
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1903202385}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 542.81665, y: 1260.108, z: 518.8624}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -586,3 +659,4 @@ SceneRoots:
   - {fileID: 1074802329}
   - {fileID: 1063646070}
   - {fileID: 84309204}
+  - {fileID: 1903202387}

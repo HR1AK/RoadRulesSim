@@ -421,7 +421,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8207b6ad194990b4d8de19878aa9d9e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sockets: []
   North: 2
   South: 2
   East: 2
@@ -599,74 +598,8 @@ Transform:
   - {fileID: 858303886492848852}
   - {fileID: 9158803797955932328}
   - {fileID: 8215223032091939321}
-  - {fileID: 7885087364787877739}
   m_Father: {fileID: 1389660139196510300}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8412677192687183789
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7885087364787877739}
-  - component: {fileID: 7379305069803034081}
-  m_Layer: 0
-  m_Name: TrafficLightManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &7885087364787877739
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8412677192687183789}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7052853953562283531}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7379305069803034081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8412677192687183789}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91630d83c12b8e741af53019686c715e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DefaultPhaseStartTime: 2
-  DefaultPhaseActiveTime: 10
-  DefaultPhaseEndTime: 2
-  PhaseDelay: 1
-  YellowBlinkFreq: 1
-  PhaseList:
-  - Name: Phase 01
-    PhaseStartTime: 2
-    PhaseActiveTime: 10
-    PhaseEndTime: 2
-    TrafficLights:
-    - {fileID: 6398075325703237792}
-    - {fileID: 3279596933144959557}
-  - Name: Phase 02
-    PhaseStartTime: 2
-    PhaseActiveTime: 10
-    PhaseEndTime: 2
-    TrafficLights:
-    - {fileID: 6444841668448876601}
-    - {fileID: 6082220203634858344}
-  InitialProgram: 1
 --- !u!1001 &1006212133706335610
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -790,17 +723,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5549b63ca9621694fa88a1fe4a2fe1ec, type: 3}
---- !u!114 &6444841668448876601 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5475643997576988146, guid: 5549b63ca9621694fa88a1fe4a2fe1ec, type: 3}
-  m_PrefabInstance: {fileID: 1336945037184105931}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dc28377d73444347b3c1764574c3829, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &9158803797955932328 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7896872740017999203, guid: 5549b63ca9621694fa88a1fe4a2fe1ec, type: 3}
@@ -863,17 +785,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5549b63ca9621694fa88a1fe4a2fe1ec, type: 3}
---- !u!114 &6398075325703237792 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5475643997576988146, guid: 5549b63ca9621694fa88a1fe4a2fe1ec, type: 3}
-  m_PrefabInstance: {fileID: 1384824623143073106}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dc28377d73444347b3c1764574c3829, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &9124487745091483697 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7896872740017999203, guid: 5549b63ca9621694fa88a1fe4a2fe1ec, type: 3}
@@ -1068,17 +979,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5549b63ca9621694fa88a1fe4a2fe1ec, type: 3}
---- !u!114 &6082220203634858344 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5475643997576988146, guid: 5549b63ca9621694fa88a1fe4a2fe1ec, type: 3}
-  m_PrefabInstance: {fileID: 2275732027436145818}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dc28377d73444347b3c1764574c3829, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &8215223032091939321 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7896872740017999203, guid: 5549b63ca9621694fa88a1fe4a2fe1ec, type: 3}
@@ -1278,14 +1178,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7896872740017999203, guid: 5549b63ca9621694fa88a1fe4a2fe1ec, type: 3}
   m_PrefabInstance: {fileID: 7385372585665716151}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3279596933144959557 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5475643997576988146, guid: 5549b63ca9621694fa88a1fe4a2fe1ec, type: 3}
-  m_PrefabInstance: {fileID: 7385372585665716151}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dc28377d73444347b3c1764574c3829, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
