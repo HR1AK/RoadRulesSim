@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using HealthbarGames;
+using System.Diagnostics;
 
 /// <summary>
 /// Full WFC (Wave Function Collapse) generator for road-tile city.
@@ -25,6 +26,9 @@ public class FullWfcCityGenerator : MonoBehaviour
 
     [Header("Traffic Lights")]
     [SerializeField] private TrafficLightManager trafficLightManager;
+    [SerializeField] private RoadGraphConnector roadGraphConnector;
+    [SerializeField] private PlayerSpawnManager playerSpawnManager;
+    [SerializeField] private TrafficBotSpawner trafficBotSpawner;
 
     // ===== Internal types =====
 
@@ -64,12 +68,19 @@ public class FullWfcCityGenerator : MonoBehaviour
     private readonly List<RealTrafficLight> _spawnedLights = new List<RealTrafficLight>();
 
     // ===== Unity =====
+    public void ClearGenerated(){
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+        }
+        _spawnedLights.Clear();
+    }
 
-    private void Start()
+     private void Start()
     {
         if (roadPrefabs == null || roadPrefabs.Count == 0)
         {
-            Debug.LogError("[FullWfcCityGenerator] roadPrefabs is empty.");
+            UnityEngine.Debug.LogError("[FullWfcCityGenerator] roadPrefabs is empty.");
             return;
         }
 
@@ -87,7 +98,6 @@ public class FullWfcCityGenerator : MonoBehaviour
 
         if (!success)
         {
-            Debug.LogError($"[FullWfcCityGenerator] Failed to generate after {maxRestarts} restarts.");
             return;
         }
 
@@ -95,11 +105,18 @@ public class FullWfcCityGenerator : MonoBehaviour
         if (trafficLightManager != null)
             trafficLightManager.AutoSetupPhases(_spawnedLights);
 
-        if (logRestarts)
-            Debug.Log($"[FullWfcCityGenerator] Generation done. Grid={_width}x{_height}, options={_allOptions.Count}, restartsUsed={usedRestarts}, seed={actualSeed}");
-    }
+        if (roadGraphConnector != null)
+            roadGraphConnector.BuildConnections();
 
-    // ===== Core WFC =====
+        if (playerSpawnManager != null)
+            playerSpawnManager.SpawnPlayer();
+
+        if (trafficBotSpawner != null)
+            trafficBotSpawner.SpawnBots();
+
+        if (logRestarts)
+            UnityEngine.Debug.Log($"[FullWfcCityGenerator] Generation done. Grid={_width}x{_height}, options={_allOptions.Count}, restartsUsed={usedRestarts}, seed={actualSeed}");
+    }
 
     private bool GenerateWithRestarts(out int restartsUsed)
     {
@@ -113,7 +130,7 @@ public class FullWfcCityGenerator : MonoBehaviour
             if (ok) return true;
 
             if (logRestarts)
-                Debug.LogWarning($"[FullWfcCityGenerator] Contradiction -> restart #{attempt + 1}/{maxRestarts}");
+                UnityEngine.Debug.LogWarning($"[FullWfcCityGenerator] Contradiction -> restart #{attempt + 1}/{maxRestarts}");
         }
 
         restartsUsed = maxRestarts;
@@ -384,7 +401,7 @@ public class FullWfcCityGenerator : MonoBehaviour
             // ВАЖНО: если клетка стала пустой — это сразу противоречие
             if (cellSet.Count == 0)
             {
-                Debug.LogError($"[WFC] Border constraint emptied cell ({x},{y}). Check tileset/border rules.");
+                UnityEngine.Debug.LogError($"[WFC] Border constraint emptied cell ({x},{y}). Check tileset/border rules.");
             }
         }
     }

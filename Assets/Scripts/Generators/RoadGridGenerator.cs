@@ -13,14 +13,38 @@ public class RoadGridGenerator : MonoBehaviour
 
     private int width;
     private int height;
+    private int empty;
 
     private Grid grid;
+
+    // public int lastEmptyCount { get; private set; }
+    // public int lastTotalCells { get; private set; }
 
     void Start()
     {
         GenerateGrid();
         trafficLightManager.AutoSetupPhases(spawnedLights);
+        Debug.Log("Empty cells:" + empty);
     }
+
+    public void ClearGenerated(){
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+        }
+        spawnedLights.Clear();
+    }
+
+//     public int GenerateOnce(int seed)
+//     {
+//         UnityEngine.Random.InitState(seed);
+
+//         lastEmptyCount = 0;
+//         GenerateGrid();
+//         lastTotalCells = width * height;
+
+//         return lastEmptyCount;
+//     }
 
     private void GenerateGrid()
     {
@@ -74,8 +98,10 @@ public class RoadGridGenerator : MonoBehaviour
         // Дебаг: сколько вариантов подходит для каждой клетки
         // Debug.Log($"Cell {cell} has {valid.Count} valid pieces");
 
-        if (valid.Count == 0)
+        if (valid.Count == 0) {
+            empty++;
             return null;
+        }
 
         // weighted random
         int totalWeight = 0;
